@@ -1,0 +1,28 @@
+package ${packageName};
+
+import org.nebula.framework.core.Promise;
+
+public interface ${activityClass}Client  {
+
+#foreach($field in $fields)
+    $field.type $field.name = $field.value;
+ #end
+
+#foreach( $method in $activityMethods )
+ 	#if ($method.parameters.size() ==0)
+    Promise<$method.returnType>  ${method.name}();
+
+	Promise<$method.returnType>  ${method.name}(Promise... waitfor);
+ 	#else
+
+ 	Promise<$method.returnType>  ${method.name}(#parametersOf ($method));
+
+	Promise<$method.returnType>  ${method.name}(#parametersOf ($method), Promise... waitfor);
+
+	Promise<$method.returnType>  ${method.name}(#promiseParametersOf ($method));
+
+	Promise<$method.returnType>  ${method.name}(#promiseParametersOf ($method), Promise... waitfor);
+ 	#end
+
+#end
+}

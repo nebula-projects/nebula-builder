@@ -1,0 +1,91 @@
+package ${packageName};
+
+import org.nebula.framework.core.Promise;
+import org.nebula.framework.activity.ActivityClientImpl;
+import org.nebula.framework.model.ActivityProfile;
+import org.nebula.framework.model.MethodProfile;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class ${activityClass}ClientImpl extends ActivityClientImpl
+    implements ${activityClass}Client {
+
+#foreach( $method in $activityMethods )
+ 	#if ($method.parameters.size() ==0)
+    public Promise<$method.returnType>  ${method.name}() {
+
+        ActivityProfile activityProfile = new ActivityProfile();
+        activityProfile.setActivity("${activityName}");
+        activityProfile.setVersion("${activityVersion}");
+
+        List<String> parameterTypes = new ArrayList<String>();
+        #foreach( $parameter in $method.parameters )
+            parameterTypes.add("${parameter.typeClass}");
+        #end
+
+        MethodProfile methodProfile = new MethodProfile();
+
+        methodProfile.setName("${method.name}");
+        methodProfile.setParameterTypes(parameterTypes);
+        methodProfile.setReturnType("${method.returnTypeClass}");
+
+		return scheduleActivity(activityProfile, methodProfile, new Promise[]{} , null) ;
+	}
+
+	public Promise<$method.returnType>  ${method.name}(Promise... waitfor) {
+
+	    ActivityProfile activityProfile = new ActivityProfile();
+        activityProfile.setActivity("${activityName}");
+        activityProfile.setVersion("${activityVersion}");
+
+        List<String> parameterTypes = new ArrayList<String>();
+        #foreach( $parameter in $method.parameters )
+            parameterTypes.add("${parameter.typeClass}");
+        #end
+
+        MethodProfile methodProfile = new MethodProfile();
+
+        methodProfile.setName("${method.name}");
+        methodProfile.setParameterTypes(parameterTypes);
+        methodProfile.setReturnType("${method.returnTypeClass}");
+
+        return scheduleActivity(activityProfile, methodProfile, new Promise[]{} ,  waitfor) ;
+	}
+ 	#else
+
+    public Promise<$method.returnType>  ${method.name}(#parametersOf ($method)) {
+		 return ${method.name}(#parameterNamesOf ($method), null);
+	 }
+
+	public Promise<$method.returnType>  ${method.name}(#parametersOf ($method) , Promise... waitfor) {
+		return ${method.name}(#promiseParameterNamesOf ($method), waitfor);
+	}
+
+	public Promise<$method.returnType>  ${method.name}(#promiseParametersOf ($method)) {
+		return ${method.name}(#parameterNamesOf ($method), null);
+	}
+
+	public Promise<$method.returnType>  ${method.name}(#promiseParametersOf ($method) , Promise... waitfor) {
+
+	    ActivityProfile activityProfile = new ActivityProfile();
+        activityProfile.setActivity("${activityName}");
+        activityProfile.setVersion("${activityVersion}");
+
+        List<String> parameterTypes = new ArrayList<String>();
+        #foreach( $parameter in $method.parameters )
+            parameterTypes.add("${parameter.typeClass}");
+        #end
+
+        MethodProfile methodProfile = new MethodProfile();
+
+        methodProfile.setName("${method.name}");
+        methodProfile.setParameterTypes(parameterTypes);
+        methodProfile.setReturnType("${method.returnTypeClass}");
+
+        return scheduleActivity(activityProfile, methodProfile, new Promise[]{#parameterNamesOf ($method)} , waitfor) ;
+    }
+    #end
+
+#end
+}

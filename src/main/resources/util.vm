@@ -1,0 +1,32 @@
+#macro( parametersOf $method)
+#foreach ($param in $method.parameters)
+${param.type} ${param.name} #if( $foreach.hasNext  ),#end
+#end
+#end
+
+#macro( promiseParametersOf $method)
+#foreach ($param in $method.parameters)
+Promise<${param.boxType}> ${param.name} #if( $foreach.hasNext ),#end
+#end
+#end
+
+#macro( parameterNamesOf $method)
+#foreach ($param in $method.parameters)
+${param.name} #if( $foreach.hasNext ),#end
+#end
+#end
+
+#macro( promiseParameterNamesOf $method)
+#foreach ($param in $method.parameters)
+Promise.toPromise(${param.name}) #if($foreach.hasNext ),#end
+#end
+#end 
+
+#macro( parameterTypesOf $method)
+new String[]{
+#foreach ($param in $method.parameters)
+"${param.typeClass}" #if($foreach.hasNext ), #end
+#end
+}
+#end 
+

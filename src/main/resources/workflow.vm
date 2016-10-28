@@ -1,0 +1,31 @@
+package ${packageName};
+
+import org.nebula.framework.core.Promise;
+import org.nebula.framework.workflow.WorkflowClient;
+
+public interface ${workflowClass}Client
+    extends WorkflowClient { 
+   
+ #foreach($field in $fields)
+    ${field.type} ${field.name} = ${field.value};
+ #end
+ 
+#if(${startMethod}) 
+ 	#if ($startMethod.parameters.size() ==0) 
+    Promise<${startMethod.returnType}>  ${startMethod.name}(); 
+ 	#else
+ 
+    Promise<${startMethod.returnType}>  ${startMethod.name}(#parametersOf ($startMethod)); 
+ 	#end 
+#end
+
+#foreach( $signal in $signalMethods ) 
+ 	#if ($signal.parameters.size() ==0) 
+    void ${signal.name}(); 
+ 	#else
+
+    void ${signal.name}(#parametersOf ($signal)); 
+ 	#end
+#end
+
+}

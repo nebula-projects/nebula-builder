@@ -1,0 +1,42 @@
+package ${packageName};
+
+import java.util.List;
+import org.nebula.framework.core.Promise;
+import org.nebula.framework.workflow.WorkflowClientImpl;
+import org.nebula.framework.client.NebulaClient;
+import org.nebula.framework.model.WorkflowProfile;
+import org.nebula.framework.model.Input;
+
+public class ${workflowClass}ClientImpl extends WorkflowClientImpl
+    implements ${workflowClass}Client { 
+    
+    public ${workflowClass}ClientImpl(NebulaClient nebulaClient, WorkflowProfile workflowProfile, List<String> realms) {
+        super(nebulaClient, workflowProfile, realms);
+    } 
+#if(${startMethod})
+ 	#if ($startMethod.parameters.size() ==0)
+ 
+    public Promise<${startMethod.returnType}>  ${startMethod.name}() {
+        return startWorkflow("${startMethod.name}", #parameterTypesOf ($startMethod), new Object[0]);
+    }
+ 	#else
+ 
+    public Promise<${startMethod.returnType}>  ${startMethod.name}(#parametersOf ($startMethod)) {
+        return startWorkflow("${startMethod.name}", #parameterTypesOf ($startMethod), new Object[]{ #parameterNamesOf ($startMethod)});
+    } 
+ 	#end
+ #end
+#foreach( $signal in $signalMethods ) 
+ 	#if ($signal.parameters.size() ==0) 
+    public void ${signal.name}() {
+       signalWorkflow("${signal.name}", #parameterTypesOf ($signal), new Object[0]);
+    } 
+ 	#else 
+ 
+    public void ${signal.name}(#parametersOf ($signal)) {
+        signalWorkflow("${signal.name}",  #parameterTypesOf ($signal), new Object[]{#parameterNamesOf ($signal)});
+    }
+ 	#end
+#end
+
+}
